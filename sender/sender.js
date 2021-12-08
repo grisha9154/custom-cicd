@@ -17,7 +17,6 @@ class RequestAgent {
         const req = http.request(this._options);
         req.write(text);
         req.end();
-        console.log(text);
     }
 }
 
