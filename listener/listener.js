@@ -1,25 +1,38 @@
-const http = require('http');
+const net = require('net');
 const fs = require('fs');
 
 class ListenerAgent {
-    constructor(port) {
-        this._server = http.createServer();
-        this._server.on('request', (request, res) => {
-            console.log('Request ready');
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({
-              data: 'Succes!'
-            }));
-            request.on('data', chunk => {
-              const data = chunk.toString();
-              this.handler(data);
-            });
+    constructor(port, hostname) {
+        this._server = net.createServer((conncetion) => {
+          console.log('Client connected');
+
+          conncetion.on('data', (chunk) => {
+            console.log('on data started');
+            const data = chunk.toString();
+            console.log(data);
+            this.handler(data);
+            console.log('on data ended');
           });
-        this._server.listen(port);
+
+          conncetion.pipe(conncetion);
+        });
+
+
+        this._server.listen(
+          {
+            port,
+            host: hostname,
+            readableAll: true,
+            writableAll: true,
+          },
+          () => {
+            console.log('Start Listen');
+          },
+        );
     }
 
     handler(data) {
-      fs.writeFileSync('./index.js', data);
+      fs.writeFileSync('../index.js', data);
     }
 }
 

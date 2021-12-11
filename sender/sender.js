@@ -1,22 +1,15 @@
-const http = require('http');
+const net = require('net');
 
 class RequestAgent {
-    constructor(hostname, port, path) {
-        this._options = {
-            hostname,
-            path,
-            port,
-            method: 'POST',
-            headers: {
-                "Content-Type": "text/plain",
-            }
-        };
+    constructor(hostname, port) {
+        this._client = new net.Socket();
+        this._client.connect(port, hostname, () => {
+            console.log('Client Connected')
+        });
     }
 
     send(text) {
-        const req = http.request(this._options);
-        req.write(text);
-        req.end();
+        this._client.write(text);
     }
 }
 
