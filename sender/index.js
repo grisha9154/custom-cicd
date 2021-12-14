@@ -13,9 +13,12 @@ const main = async() => {
         const fileName = event.filename;
         switch(type) {
             case 'change':
-                const file = await readFile(`${path}/${fileName}`);
-                const fileData = file.toString();
-                reqAgent.send(fileData);
+                if(fileName === 'bundle.js') {
+                    const file = await readFile(`${path}/${fileName}`);
+                    const fileData = file.toString();
+                    reqAgent.send(`start ${fileName}`);
+                    reqAgent.sendFile(fileData);        
+                }
                 break;
         }
     }

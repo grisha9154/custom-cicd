@@ -9,12 +9,9 @@ class ListenerAgent {
           conncetion.on('data', (chunk) => {
             console.log('on data started');
             const data = chunk.toString();
-            console.log(data);
-            this.handler(data);
+            this.handle(data);
             console.log('on data ended');
           });
-
-          conncetion.pipe(conncetion);
         });
 
 
@@ -31,8 +28,22 @@ class ListenerAgent {
         );
     }
 
-    handler(data) {
-      fs.writeFileSync('../index.js', data);
+    _writeFile(data) {
+      fs.writeFileSync(`../${this._fileName}`, data, { flag: 'a+' });
+    }
+
+    _resetFile() {
+      fs.writeFileSync(`../${this._fileName}`, '');
+    }
+
+    handle(data) {
+      if (data.startsWith('start')) {
+        const tokens = data.split(' ');
+        this._fileName = tokens[1];
+        this._resetFile();
+      } else {
+        this._writeFile(data);
+      }
     }
 }
 
